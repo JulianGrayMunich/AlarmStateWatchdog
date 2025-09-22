@@ -1,0 +1,36 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net8.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="EASendMail" Version="7.9.2.9" />
+    <PackageReference Include="EPPlus" Version="8.1.0" />
+    <PackageReference Include="Microsoft.Data.SqlClient" Version="6.1.1" />
+    <PackageReference Include="System.Configuration.ConfigurationManager" Version="9.0.8" />
+    <PackageReference Include="Twilio" Version="7.13.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Reference Include="databaseAPI">
+      <HintPath>..\..\DBapi\databaseAPI\bin\Release\net8.0\databaseAPI.dll</HintPath>
+    </Reference>
+    <Reference Include="gnaDataClasses">
+      <HintPath>..\..\gnaDataClasses\gnaDataClasses\bin\Release\net8.0\gnaDataClasses.dll</HintPath>
+    </Reference>
+    <Reference Include="GNAgeneraltools">
+      <HintPath>..\..\GNAgeneraltools\GNAgeneraltools\bin\Release\net8.0\GNAgeneraltools.dll</HintPath>
+    </Reference>
+    <Reference Include="GNAspreadsheettools">
+      <HintPath>..\..\GNAspreadsheettools\GNAspreadsheettools\bin\Release\net8.0\GNAspreadsheettools.dll</HintPath>
+    </Reference>
+    <Reference Include="GNA_CommercialLicenseValidator">
+      <HintPath>..\..\GNA_CommercialLicenseValidator\GNA_CommercialLicenseValidator\bin\Release\net8.0\GNA_CommercialLicenseValidator.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+
+</Project>
