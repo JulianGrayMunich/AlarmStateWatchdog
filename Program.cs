@@ -22,7 +22,8 @@ using Microsoft.Extensions.Configuration;
 
 using OfficeOpenXml;
 
-using Twilio.Rest.Video.V1;
+using Twilio;
+using Twilio.Rest.Api.V2010.Account;
 
 
 #pragma warning disable CS0162
@@ -468,7 +469,7 @@ namespace AlarmStateWatchdog
             }
 
             // Final message composition 
-            string SMSmessage = $"{strProjectTitle}\n{messageBalance}";
+            string SMSmessage = $"{strSMSTitle}\n{messageBalance}";
             strShortMessage = messageBalance;
 
 
@@ -503,7 +504,7 @@ namespace AlarmStateWatchdog
                 emailMessage = $"{strProjectTitle}\n{messageBalance}";
 
                 // Update the sms message as well
-                string smsHeader = strProjectTitle + " status";
+                string smsHeader = strSMSTitle + " status";
                 SMSmessage = $"{smsHeader}\n{messageBalance}";
 
 
@@ -542,7 +543,8 @@ namespace AlarmStateWatchdog
                 }
                 else
                 {
-                    emailHeader += ": Status change (" + DateTime.Today.ToString("yyyy-MM-dd") + " " + strDailyStatusReportTime + ")";
+
+                    emailHeader += ": Status change (" + DateTime.Today.ToString("yyyy-MM-dd") + " " + DateTime.Now.ToString("HH:mm") + ")";
                     emailMessage = gnaT.addCopyright("AlarmStateWatchdog", SMSmessage);
                 }
 
@@ -557,12 +559,12 @@ namespace AlarmStateWatchdog
                 if (smsSuccess = true)
                 {
                     Console.WriteLine(strTab1 + "SMS array sent to " + strMobileNumbers);
-                    gnaT.updateSystemLogFile(strStatusFolder, strProjectTitle+": Status SMS to "+strMobileNumbers);
+                    gnaT.updateSystemLogFile(strStatusFolder, strSMSTitle + ": Status SMS to "+strMobileNumbers);
                 }
                 else
                 {
                     Console.WriteLine(strTab1 + "SMS array failed");
-                    gnaT.updateSystemLogFile(strStatusFolder, strProjectTitle + ": SMS failed " + strMobileNumbers);
+                    gnaT.updateSystemLogFile(strStatusFolder, strSMSTitle + ": SMS failed " + strMobileNumbers);
                 }
             }
             else
