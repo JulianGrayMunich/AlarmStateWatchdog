@@ -4,6 +4,7 @@ using System.Globalization;
 using System.IO;
 using System.Net.Mail;
 using System.Reflection.Metadata.Ecma335;
+using System.Security.Claims;
 using System.Text.RegularExpressions;
 
 using databaseAPI;
@@ -24,6 +25,8 @@ using OfficeOpenXml;
 
 using Twilio;
 using Twilio.Rest.Api.V2010.Account;
+
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 
 #pragma warning disable CS0162
@@ -152,10 +155,7 @@ namespace AlarmStateWatchdog
             string strAlarmFile = "NoDataAlarmState.txt";
             string alarmLog = strAlarmsFolder + strAlarmFile;
             string strMasterWorkbookFullPath = strExcelPath + strExcelFile;
-
             #endregion
-
-
 
 
 
@@ -176,7 +176,9 @@ namespace AlarmStateWatchdog
                 #endregion
 
 
-                gnaT.WelcomeMessage("AlarmStateWatchdog 20250908");
+                gnaT.WelcomeMessage($"AlarmStateWatchdog {BuildInfo.BuildDateString()}");
+
+                Console.ReadKey();
 
                 string strNow = DateTime.Now.ToString("yyyy-MM-dd HH:mm");
 
@@ -332,10 +334,12 @@ namespace AlarmStateWatchdog
 
             #region TestData
             // for testing only - comment out for live operation
-            strLocalStartTime = "'2025-05-24 00:00'";
-            strLocalEndTime = "'2025-05-24 06:00'";
+            //strLocalStartTime = "'2025-05-24 00:00'";
+            //strLocalEndTime = "'2025-05-24 06:00'";
             #endregion
 
+            Console.WriteLine($"{strTab1}Start: {strLocalStartTime}");
+            Console.WriteLine($"{strTab1}  End: {strLocalEndTime}");
 
             string strTimeBlockStartUTC = "'" + gnaT.convertLocalToUTC(strLocalStartTime) + "'";
             string strTimeBlockEndUTC = "'" + gnaT.convertLocalToUTC(strLocalEndTime) + "'";
@@ -506,7 +510,7 @@ namespace AlarmStateWatchdog
                 // Update the sms message as well
                 string smsHeader = strSMSTitle + " status";
                 SMSmessage = $"{smsHeader}\n{messageBalance}";
-
+                emailMessage += $"\r\nAlarm triggers:\r\n1.Less than {iNoOfSuccessfulReadings} targets observed in past {dblAlarmWindowHrs}hrs.\r\n2.T4D server fails to process data in past {dblAlarmWindowHrs} hrs.";
 
                 // Add copyright notice
                 emailMessage = gnaT.addCopyright("AlarmStateWatchdog", emailMessage);
