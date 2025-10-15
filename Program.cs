@@ -43,6 +43,8 @@ namespace AlarmStateWatchdog
     {
         static void Main()
         {
+            try
+            {
             gnaTools gnaT = new();
             dbAPI gnaDBAPI = new();
             spreadsheetAPI gnaSpreadsheetAPI = new();
@@ -178,11 +180,7 @@ namespace AlarmStateWatchdog
 
                 gnaT.WelcomeMessage($"AlarmStateWatchdog {BuildInfo.BuildDateString()}");
 
-                Console.ReadKey();
-
                 string strNow = DateTime.Now.ToString("yyyy-MM-dd HH:mm");
-
-
 
                 Console.WriteLine("");
                 Console.WriteLine("1. Check system environment");
@@ -587,8 +585,11 @@ ThatsAllFolks:
             gnaT.freezeScreen(strFreezeScreen);
             Console.WriteLine("\nTask complete");
             Environment.Exit(0);
-
-
         }
+            catch (Exception ex)
+            {
+                File.WriteAllText("fatal_crash.log", ex.ToString());
+            }
+}
     }
 }
