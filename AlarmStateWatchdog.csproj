@@ -10,9 +10,9 @@
   <ItemGroup>
     <PackageReference Include="EASendMail" Version="7.9.2.9" />
     <PackageReference Include="EPPlus" Version="8.2.1" />
-    <PackageReference Include="Microsoft.Data.SqlClient" Version="7.0.0-preview1.25257.1" />
-    <PackageReference Include="System.Configuration.ConfigurationManager" Version="10.0.0-rc.2.25502.107" />
-    <PackageReference Include="Twilio" Version="7.13.4" />
+    <PackageReference Include="Microsoft.Data.SqlClient" Version="7.0.0-preview2.25289.6" />
+    <PackageReference Include="System.Configuration.ConfigurationManager" Version="10.0.0" />
+    <PackageReference Include="Twilio" Version="7.13.6" />
   </ItemGroup>
 
   <ItemGroup>
