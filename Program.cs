@@ -356,7 +356,7 @@ namespace AlarmStateWatchdog
 
                 #region PrismReadState
 
-                Console.WriteLine("8. Retrieve prism read state ");
+                Console.WriteLine("8. Determine current read state ");
                 // sensorList assumed to be filled already from getSensorInfo()
                 sensorList = gnaDBAPI.retrieveIsSensorRead(strDBconnection, sensorList, strTimeBlockStartUTC, strTimeBlockEndUTC);
 
@@ -414,6 +414,26 @@ namespace AlarmStateWatchdog
 
                 strCurrentATSstate = strCurrentATSstate.TrimEnd(',');
 
+
+                // Build up a full status message.
+                string strFullStatusMessage = string.Empty;
+
+                var sbMessage = new System.Text.StringBuilder();
+                foreach (var s in alarmstate)
+                {
+                    if (s.currentAlarmState == "Alarm")
+                    {
+                        int total = s.Yes + s.No;
+                        sbMessage.AppendLine($"{s.ATSname}({s.Settop}):{s.currentAlarmState}({s.Yes}/{total})");
+                    }
+                    else
+                    {
+                        sbMessage.AppendLine($"{s.ATSname}({s.Settop}):{s.currentAlarmState}");
+                    }
+                }
+                strFullStatusMessage = sbMessage.ToString().TrimEnd();
+
+                Console.WriteLine("\nCurrent state:\n" + strFullStatusMessage + "\n");
 
                 try
                 {
@@ -504,25 +524,9 @@ namespace AlarmStateWatchdog
 
                 if (generateReport)
                 {
-                    strShortMessage = "Daily status report";
-                    // === Build full status message for email ============================
 
                     messageBalance = string.Empty;
-
-                    var sbEmail = new System.Text.StringBuilder();
-                    foreach (var s in alarmstate)
-                    {
-                        if (s.currentAlarmState == "Alarm")
-                        {
-                            int total = s.Yes + s.No;
-                            sbEmail.AppendLine($"{s.ATSname}({s.Settop}):{s.currentAlarmState}({s.Yes}/{total})");
-                        }
-                        else
-                        {
-                            sbEmail.AppendLine($"{s.ATSname}({s.Settop}):{s.currentAlarmState}");
-                        }
-                    }
-                    messageBalance = sbEmail.ToString().TrimEnd();
+                    messageBalance = strFullStatusMessage;
                     strShortMessage = messageBalance;
 
                     // Final message composition
@@ -541,6 +545,7 @@ namespace AlarmStateWatchdog
                 if (!string.IsNullOrEmpty(strShortMessage))
                 {
                     Console.WriteLine(strTab1 + strShortMessage);
+
                     if (generateReport)
                     {
                         Console.WriteLine(strTab1 + "Daily report generated");
