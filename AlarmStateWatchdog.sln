@@ -1,9 +1,17 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
-VisualStudioVersion = 17.14.36414.22 d17.14
+VisualStudioVersion = 17.14.36414.22
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AlarmStateWatchdog", "AlarmStateWatchdog.csproj", "{40E10277-2777-46B1-9F45-57ADBC984BEF}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "databaseAPI", "..\..\DBapi\databaseAPI\databaseAPI.csproj", "{145959CE-5E95-1C50-1681-BC8B0B972EBA}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GNA_CommercialLicenseValidator", "..\..\GNA_CommercialLicenseValidator\GNA_CommercialLicenseValidator\GNA_CommercialLicenseValidator.csproj", "{4B540D55-9292-7A0F-3AC4-332E844E1928}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "gnaDataClasses", "..\..\gnaDataClasses\gnaDataClasses\gnaDataClasses.csproj", "{05AA28DB-2C4E-4290-B61A-B50DCE9B0E63}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GNAtools", "..\..\GNAtools\GNAtools\GNAtools.csproj", "{07CDB07A-52BF-5CFC-A6C6-210F2078ADFB}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,6 +23,22 @@ Global
 		{40E10277-2777-46B1-9F45-57ADBC984BEF}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{40E10277-2777-46B1-9F45-57ADBC984BEF}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{40E10277-2777-46B1-9F45-57ADBC984BEF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{145959CE-5E95-1C50-1681-BC8B0B972EBA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{145959CE-5E95-1C50-1681-BC8B0B972EBA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{145959CE-5E95-1C50-1681-BC8B0B972EBA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{145959CE-5E95-1C50-1681-BC8B0B972EBA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4B540D55-9292-7A0F-3AC4-332E844E1928}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4B540D55-9292-7A0F-3AC4-332E844E1928}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4B540D55-9292-7A0F-3AC4-332E844E1928}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4B540D55-9292-7A0F-3AC4-332E844E1928}.Release|Any CPU.Build.0 = Release|Any CPU
+		{05AA28DB-2C4E-4290-B61A-B50DCE9B0E63}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{05AA28DB-2C4E-4290-B61A-B50DCE9B0E63}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{05AA28DB-2C4E-4290-B61A-B50DCE9B0E63}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{05AA28DB-2C4E-4290-B61A-B50DCE9B0E63}.Release|Any CPU.Build.0 = Release|Any CPU
+		{07CDB07A-52BF-5CFC-A6C6-210F2078ADFB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{07CDB07A-52BF-5CFC-A6C6-210F2078ADFB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{07CDB07A-52BF-5CFC-A6C6-210F2078ADFB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{07CDB07A-52BF-5CFC-A6C6-210F2078ADFB}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

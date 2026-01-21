@@ -46,13 +46,30 @@ namespace AlarmStateWatchdog
         {
             try
             {
+                
+
+                #region Setting state
+                // Applied (8): set once, early
+                Console.OutputEncoding = System.Text.Encoding.Unicode;
+                int headingNo = 1;
+                string strTab1 = "     ";
+                string strTab2 = "        ";
+                string strTab3 = "           ";
+                string strTab4 = "              ";
+                #endregion
+
+                #region Instantiate core classes
                 gnaTools gnaT = new();
                 dbAPI gnaDBAPI = new();
                 spreadsheetAPI gnaSpreadsheetAPI = new();
-                gnaDataClass gnaDC = new();
+                #endregion
+
+                gnaT.WelcomeMessage($"AlarmStateWatchdog {BuildInfo.BuildDateString()}");
+
+                Console.WriteLine($"\n{headingNo++}. Setting State");
 
                 #region Validate Config File
-                Console.WriteLine("Parsing local config file");
+                Console.WriteLine($"{strTab1}Parsing local config file");
                 gnaT.VerifyLocalConfig();
                 #endregion
 
@@ -60,13 +77,6 @@ namespace AlarmStateWatchdog
                 string strDBconnection = System.Configuration.ConfigurationManager.ConnectionStrings["DBconnectionString"].ConnectionString;
                 #endregion
 
-
-                #region Console
-                string strTab1 = "     ";
-                string strTab2 = "        ";
-                string strTab3 = "           ";
-                string strTab4 = "              ";
-                #endregion
 
                 #region Config Variables
                 var config = System.Configuration.ConfigurationManager.AppSettings;
@@ -78,7 +88,20 @@ namespace AlarmStateWatchdog
                 string strFreezeScreen = config["freezeScreen"];
                 string strComputedRdT = config["computedRdT"];
                 string strSendEmails = config["SendEmails"];
+                string strjumpSensorIDupdate = config["jumpSensorIDupdate"];
+                string strjumpATSverification = config["jumpATSverification"];
+
                 #endregion
+
+                #region Clean exit
+                void FinishAndExit()
+                {
+                    Console.WriteLine("\nAlarmStateWatchdog export completed...\n\n");
+                    gnaT.freezeScreen(strFreezeScreen);
+                }
+
+                #endregion
+
 
 
                 #region Operational Settings
@@ -172,43 +195,38 @@ namespace AlarmStateWatchdog
                     //CultureInfo culture;
 
                 #region Licenses
-                    Console.WriteLine("Validating the software license...");
+                    Console.WriteLine($"{strTab1}Validating the software license...");
                     LicenseValidator.ValidateLicense("ALSTWD", licenseCode);
-                    Console.WriteLine(strTab1 + "Validated");
+                    Console.WriteLine($"{strTab2}Validated");
                     ExcelPackage.License.SetCommercial("14XO1NhmOmVcqDWhA0elxM72um6vnYOS8UiExVFROZuRPn1Ddv5fRV8fiCPcjujkdw9H18nExINNFc8nmOjRIQEGQzVDRjMz5wdPAJkEAQEA");  //valid to 23.03.2026
                     #endregion
 
 
                 #region Environment Check
-                    gnaT.WelcomeMessage($"AlarmStateWatchdog {BuildInfo.BuildDateString()}");
-
                     string strNow = DateTime.Now.ToString("yyyy-MM-dd HH:mm");
-
-                    Console.WriteLine("");
-                    Console.WriteLine("1. Check system environment");
-                    Console.WriteLine(strTab1 + "Project: " + strProjectTitle);
-                    Console.WriteLine(strTab1 + "Master workbook: " + strMasterWorkbookFullPath);
+                    Console.WriteLine($"{headingNo++}. Check system environment");
+                    Console.WriteLine($"{strTab1}Project: {strProjectTitle}");
+                    Console.WriteLine($"{strTab1}Master workbook: {strMasterWorkbookFullPath}");
 
                     if (strFreezeScreen == "Yes")
                     {
                         gnaDBAPI.testDBconnection(strDBconnection);
-
                         string strProjectID = gnaDBAPI.getProjectID(strDBconnection, strProjectTitle);
                         if (strProjectID == "Missing")
                         {
-                            Console.WriteLine("\n" + strTab1 + "**** " + strProjectTitle + " is missing ****");
-                            goto ThatsAllFolks;
+                            Console.WriteLine($"{strTab1}\n**** {strProjectTitle} is missing ****");
+                            FinishAndExit();
                         }
                         else
                         {
-                            Console.WriteLine(strTab1 + strProjectTitle + " found");
+                            Console.WriteLine($"{strTab1}{strProjectTitle} found");
                         }
 
                         gnaSpreadsheetAPI.checkWorksheetExists(strMasterWorkbookFullPath, strSurveyWorksheet);
                     }
                     else
                     {
-                        Console.WriteLine(strTab1 + "Existance of workbook & worksheets is not checked");
+                        Console.WriteLine($"{strTab1}Existance of workbook & worksheets is not checked");
                     }
 
                 }
@@ -221,8 +239,8 @@ namespace AlarmStateWatchdog
 
                 #region Previous Alarm State 
                 // read the ats and settop from the config file and write to AlarmState
-                Console.WriteLine("2. Extract ATS and settop data");
-                Console.WriteLine(strTab1 + "Extract from config file");
+                Console.WriteLine($"{headingNo++}. Extract ATS and settop data");
+                Console.WriteLine($"{strTab1}Extract from config file");
                 // instantiate the list
                 var alarmstate = new List<AlarmState>();
 
@@ -254,29 +272,41 @@ namespace AlarmStateWatchdog
 
                 Console.WriteLine($"{strTab1}Verify ATS list in {strExcelFile}");
 
-                foreach (var state in alarmstate)
+                if (strjumpATSverification == "Yes")
                 {
-
-                    strATSname = state.ATSname;
-                    strATSexists = gnaSpreadsheetAPI.CheckStringInColumn(strExcelPath, strExcelFile, strSurveyWorksheet, "11", strATSname);
-                    if (strATSexists == "Missing")
-                    {
-                        strExitFlag = "Yes";
-                        strInformation = strInformation + strATSname + ",";
-                    }
-                }
-
-                if (strExitFlag == "Yes")
-                {
-                    strInformation = strInformation.TrimEnd(',');
-                    Console.WriteLine($"\n{strTab2}The following ATS are missing from {strExcelFile}:");
-                    Console.WriteLine($"{strTab3} {strInformation}");
-                    goto ThatsAllFolks;
+                    Console.WriteLine($"{strTab2}Skipping ATS verification as per config");
                 }
                 else
                 {
-                    Console.WriteLine($"{strTab2}All ATS verified.");
+                    foreach (var state in alarmstate)
+                    {
+
+                        strATSname = state.ATSname;
+                        strATSexists = gnaSpreadsheetAPI.CheckStringInColumn(strExcelPath, strExcelFile, strSurveyWorksheet, "11", strATSname);
+                        if (strATSexists == "Missing")
+                        {
+                            strExitFlag = "Yes";
+                            strInformation = strInformation + strATSname + ",";
+                        }
+                    }
+
+                    if (strExitFlag == "Yes")
+                    {
+                        strInformation = strInformation.TrimEnd(',');
+                        Console.WriteLine($"\n{strTab2}The following ATS are missing from {strExcelFile}:");
+                        Console.WriteLine($"{strTab3} {strInformation}");
+                        FinishAndExit();
+                    }
+                    else
+                    {
+                        Console.WriteLine($"{strTab2}All ATS verified.");
+                    }
                 }
+
+
+
+
+                    
 
                 // prepare the data for the alarm txt file.
                 // Assume: var ats = new List<AlarmState>();
@@ -311,26 +341,35 @@ namespace AlarmStateWatchdog
 
                 #region SensorID
 
-                Console.WriteLine("3. Extract point names ");
-                string[] strPointNames = gnaSpreadsheetAPI.readPointNames(strMasterWorkbookFullPath, strSurveyWorksheet, strFirstDataRow);
+                if (strjumpSensorIDupdate == "Yes")
+                {
+                    Console.WriteLine($"{strTab2}Skipping SensorID update as per config");
+                }
+                else
+                {
 
-                Console.WriteLine("4. Extract SensorID");
-                string[,] strSensors = gnaDBAPI.getSensorIDfromDB(strDBconnection, strPointNames, strProjectTitle);
+                    Console.WriteLine($"{headingNo++}. Extract point names ");
+                    string[] strPointNames = gnaSpreadsheetAPI.readPointNames(strMasterWorkbookFullPath, strSurveyWorksheet, strFirstDataRow);
 
-                Console.WriteLine("5. Write SensorID to workbook");
-                gnaSpreadsheetAPI.writeSensorID(strMasterWorkbookFullPath, strSurveyWorksheet, strSensors, strFirstDataRow);
+                    Console.WriteLine($"{headingNo++}. Extract SensorID");
+                    string[,] strSensors = gnaDBAPI.getSensorIDfromDB(strDBconnection, strPointNames, strProjectTitle);
+
+                    Console.WriteLine($"{headingNo++}. Write SensorID to workbook");
+                    gnaSpreadsheetAPI.writeSensorID(strMasterWorkbookFullPath, strSurveyWorksheet, strSensors, strFirstDataRow);
+                }
 
 
 
-                Console.WriteLine("6. Extract sensor info from workbook");
+
+                Console.WriteLine($"{headingNo++}. Extract sensor info from workbook");
 
                 var sensorList = gnaSpreadsheetAPI.getSensorInfo(strExcelPath, strExcelFile, strSurveyWorksheet, strFirstDataRow);
-
+                Console.WriteLine($"{strTab1}Done");
                 #endregion
 
 
                 #region Timeblocks start & end
-                Console.WriteLine("7. Generate timeblock Start and End ");
+                Console.WriteLine($"{headingNo++}. Generate timeblock Start and End ");
                 double dblStartTimeOffset = -1.0 * dblAlarmWindowHrs;
                 string strLocalStartTime = DateTime.Now.AddHours(dblStartTimeOffset).ToString("yyyy-MM-dd HH:mm") + ":00";
                 string strLocalEndTime = DateTime.Now.ToString("yyyy-MM-dd HH:mm") + ":00";
@@ -356,7 +395,7 @@ namespace AlarmStateWatchdog
 
                 #region PrismReadState
 
-                Console.WriteLine("8. Determine current read state ");
+                Console.WriteLine($"{headingNo++}. Determine current read state ");
                 // sensorList assumed to be filled already from getSensorInfo()
                 sensorList = gnaDBAPI.retrieveIsSensorRead(strDBconnection, sensorList, strTimeBlockStartUTC, strTimeBlockEndUTC);
 
@@ -467,7 +506,7 @@ namespace AlarmStateWatchdog
 
                 #region Messages and Reports
 
-                Console.WriteLine("9. Prepare messages");
+                Console.WriteLine($"{headingNo++}. Prepare messages");
                 // Prepare the message
                 string messageBalance = string.Empty;
                 string strShortMessage = string.Empty;
@@ -535,7 +574,7 @@ namespace AlarmStateWatchdog
                     // Update the sms message as well
                     string smsHeader = strSMSTitle + " status";
                     SMSmessage = $"{smsHeader}\n{messageBalance}";
-                    emailMessage += $"\r\nAlarm triggers:\r\n1.Less than {iNoOfSuccessfulReadings} targets observed in past {dblAlarmWindowHrs}hrs.\r\n2.T4D server fails to process data in past {dblAlarmWindowHrs} hrs.";
+                    emailMessage += $"\r\n\r\nAlarm triggers:\r\n1.Less than {iNoOfSuccessfulReadings} targets observed in past {dblAlarmWindowHrs}hrs.\r\n2.T4D server fails to process data in past {dblAlarmWindowHrs} hrs.\r\n";
 
                     // Add copyright notice
                     emailMessage = gnaT.addCopyright("AlarmStateWatchdog", emailMessage);
@@ -583,32 +622,30 @@ namespace AlarmStateWatchdog
                         emailCreds,
                         emailHeader,
                         emailMessage);
-                    Console.WriteLine(strTab1 + resultMsg);
+                    Console.WriteLine($"{strTab1}{resultMsg}");
                     gnaT.updateSystemLogFile(strStatusFolder, strProjectTitle + ": " + resultMsg);
 
                     bool smsSuccess = gnaT.sendSMSArray(SMSmessage, smsMobile);
                     if (smsSuccess = true)
                     {
-                        Console.WriteLine(strTab1 + "SMS array sent to " + strMobileNumbers);
+                        Console.WriteLine($"{strTab1}SMS array sent to {strMobileNumbers}");
                         gnaT.updateSystemLogFile(strStatusFolder, strSMSTitle + ": Status SMS to " + strMobileNumbers);
                     }
                     else
                     {
-                        Console.WriteLine(strTab1 + "SMS array failed");
+                        Console.WriteLine($"{strTab1}SMS array failed");
                         gnaT.updateSystemLogFile(strStatusFolder, strSMSTitle + ": SMS failed " + strMobileNumbers);
                     }
                 }
                 else
                 {
-                    Console.WriteLine(strTab1 + "No sms or emails sent");
+                    Console.WriteLine($"{strTab1}No sms or emails sent");
                 }
 
                 #endregion
 
 ThatsAllFolks:
-                gnaT.freezeScreen(strFreezeScreen);
-                Console.WriteLine("\nTask complete");
-                Environment.Exit(0);
+                FinishAndExit();
             }
             catch (Exception ex)
             {

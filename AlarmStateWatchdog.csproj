@@ -9,28 +9,17 @@
 
   <ItemGroup>
     <PackageReference Include="EASendMail" Version="7.9.2.9" />
-    <PackageReference Include="EPPlus" Version="8.3.1" />
-    <PackageReference Include="Microsoft.Data.SqlClient" Version="7.0.0-preview2.25289.6" />
-    <PackageReference Include="System.Configuration.ConfigurationManager" Version="10.0.0" />
-    <PackageReference Include="Twilio" Version="7.13.7" />
+    <PackageReference Include="EPPlus" Version="8.4.1" />
+    <PackageReference Include="Microsoft.Data.SqlClient" Version="7.0.0-preview3.25342.7" />
+    <PackageReference Include="System.Configuration.ConfigurationManager" Version="10.0.2" />
+    <PackageReference Include="Twilio" Version="7.14.1" />
   </ItemGroup>
 
   <ItemGroup>
-    <Reference Include="databaseAPI">
-      <HintPath>..\..\DBapi\databaseAPI\bin\Release\net8.0\databaseAPI.dll</HintPath>
-    </Reference>
-    <Reference Include="gnaDataClasses">
-      <HintPath>..\..\gnaDataClasses\gnaDataClasses\bin\Release\net8.0\gnaDataClasses.dll</HintPath>
-    </Reference>
-    <Reference Include="GNAgeneraltools">
-      <HintPath>..\..\GNAgeneraltools\GNAgeneraltools\bin\Release\net8.0\GNAgeneraltools.dll</HintPath>
-    </Reference>
-    <Reference Include="GNAspreadsheettools">
-      <HintPath>..\..\GNAspreadsheettools\GNAspreadsheettools\bin\Release\net8.0\GNAspreadsheettools.dll</HintPath>
-    </Reference>
-    <Reference Include="GNA_CommercialLicenseValidator">
-      <HintPath>..\..\GNA_CommercialLicenseValidator\GNA_CommercialLicenseValidator\bin\Release\net8.0\GNA_CommercialLicenseValidator.dll</HintPath>
-    </Reference>
+    <ProjectReference Include="..\..\DBapi\databaseAPI\databaseAPI.csproj" />
+    <ProjectReference Include="..\..\gnaDataClasses\gnaDataClasses\gnaDataClasses.csproj" />
+    <ProjectReference Include="..\..\GNAtools\GNAtools\GNAtools.csproj" />
+    <ProjectReference Include="..\..\GNA_CommercialLicenseValidator\GNA_CommercialLicenseValidator\GNA_CommercialLicenseValidator.csproj" />
   </ItemGroup>
 
 </Project>
